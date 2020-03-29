@@ -23,6 +23,7 @@ import org.apache.http.util.EntityUtils;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -249,29 +250,23 @@ public class HypixelAPI {
     }
 
     private CompletableFuture<ResourceReply> requestResource(String resource) {
-        CompletableFuture<ResourceReply> future = new CompletableFuture<>();
-        try {
+        return CompletableFuture.supplyAsync(() -> {
             StringBuilder url = new StringBuilder(BASE_URL);
             url.append("resources/").append(resource);
 
-            executorService.submit(() -> {
-                try {
-                    ResourceReply response = httpClient.execute(new HttpGet(url.toString()), obj -> {
-                        String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
-                        return new ResourceReply(GSON.fromJson(content, JsonObject.class));
-                    });
+            try {
+                ResourceReply response = httpClient.execute(new HttpGet(url.toString()), obj -> {
+                    String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
+                    return new ResourceReply(GSON.fromJson(content, JsonObject.class));
+                });
 
-                    checkReply(response);
+                checkReply(response);
 
-                    future.complete(response);
-                } catch (Throwable t) {
-                    future.completeExceptionally(t);
-                }
-            });
-        } catch (Throwable throwable) {
-            future.completeExceptionally(throwable);
-        }
-        return future;
+                return response;
+            } catch (Throwable throwable) {
+                throw new CompletionException(throwable);
+            }
+        }, executorService);
     }
 
     /**
