@@ -15,13 +15,11 @@ public class BoostersTypeAdapterFactory<T extends BoostersReply.Booster> extends
         JsonObject obj = json.getAsJsonObject();
 
         JsonElement stackedElement = obj.get("stacked");
-        if (stackedElement != null) {
-            if (stackedElement.isJsonPrimitive()) {
-                if (stackedElement.getAsJsonPrimitive().isBoolean()) {
-                    obj.addProperty("queuedToStack", stackedElement.getAsJsonPrimitive().getAsBoolean());
-                    obj.remove("stacked");
-                }
-            }
-        }
+        if (stackedElement == null) return;
+        if (stackedElement.isJsonPrimitive()) return;
+        if (!stackedElement.getAsJsonPrimitive().isBoolean()) return;
+
+        obj.addProperty("queuedToStack", stackedElement.getAsJsonPrimitive().getAsBoolean());
+        obj.remove("stacked");
     }
 }

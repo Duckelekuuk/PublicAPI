@@ -1,5 +1,7 @@
 package net.hypixel.api.reply;
 
+import com.google.gson.annotations.SerializedName;
+import net.hypixel.api.HypixelAPI;
 import net.hypixel.api.util.Banner;
 
 import java.time.ZonedDateTime;
@@ -21,7 +23,9 @@ public class GuildReply extends AbstractReply {
     }
 
     public static class Guild {
-        private String _id;
+
+        @SerializedName("_id")
+        private String id;
 
         private String name;
         private String description;
@@ -36,8 +40,17 @@ public class GuildReply extends AbstractReply {
         private long exp;
         private int legacyRanking;
 
+
+        /**
+         * Replaced by method {@link Guild#getId()})}
+         */
+        @Deprecated
         public String get_id() {
-            return _id;
+            return id;
+        }
+
+        public String getId() {
+            return id;
         }
 
         public String getName() {
@@ -91,7 +104,7 @@ public class GuildReply extends AbstractReply {
         @Override
         public String toString() {
             return "Guild{" +
-                    "_id='" + _id + '\'' +
+                    "_id='" + id + '\'' +
                     ", name='" + name + '\'' +
                     ", description='" + description + '\'' +
                     ", tag='" + tag + '\'' +

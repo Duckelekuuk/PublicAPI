@@ -6,6 +6,8 @@ import java.time.ZonedDateTime;
 
 public class Utilities {
 
+    private Utilities(){}
+
     public static ZonedDateTime getDateTime(long timeStamp) {
         return Instant.ofEpochMilli(timeStamp).atZone(ZoneId.of("America/New_York"));
     }

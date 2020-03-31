@@ -28,9 +28,6 @@ public class LeaderboardsReply extends AbstractReply {
         private List<UUID> leaders;
         private String title;
 
-        public Leaderboard() {
-        }
-
         public String getPath() {
             return path;
         }
