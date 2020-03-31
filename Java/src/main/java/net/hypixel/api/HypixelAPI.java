@@ -211,42 +211,36 @@ public class HypixelAPI {
      */
     // TODO use a map of string to object?
     private <R extends AbstractReply> CompletableFuture<R> get(Class<R> clazz, String request, Object... params) {
-        CompletableFuture<R> future = new CompletableFuture<>();
-        try {
-            if (params.length % 2 != 0)
-                throw new IllegalArgumentException("Need both key and value for parameters");
+        if (params.length % 2 != 0)
+            throw new IllegalArgumentException("Need both key and value for parameters");
 
-            StringBuilder url = new StringBuilder(BASE_URL);
+        StringBuilder url = new StringBuilder(BASE_URL);
 
-            url.append(request);
-            url.append("?key=").append(apiKey);
+        url.append(request);
+        url.append("?key=").append(apiKey);
 
-            for (int i = 0; i < params.length - 1; i += 2) {
-                url.append("&").append(params[i]).append("=").append(params[i + 1]);
-            }
-
-            executorService.submit(() -> {
-                try {
-                    R response = httpClient.execute(new HttpGet(url.toString()), obj -> {
-                        String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
-                        if (clazz == ResourceReply.class) {
-                            return (R) new ResourceReply(GSON.fromJson(content, JsonObject.class));
-                        } else {
-                            return GSON.fromJson(content, clazz);
-                        }
-                    });
-
-                    checkReply(response);
-
-                    future.complete(response);
-                } catch (Throwable t) {
-                    future.completeExceptionally(t);
-                }
-            });
-        } catch (Throwable throwable) {
-            future.completeExceptionally(throwable);
+        for (int i = 0; i < params.length - 1; i += 2) {
+            url.append("&").append(params[i]).append("=").append(params[i + 1]);
         }
-        return future;
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                R response = httpClient.execute(new HttpGet(url.toString()), obj -> {
+                    String content = EntityUtils.toString(obj.getEntity(), "UTF-8");
+                    if (clazz == ResourceReply.class) {
+                        return clazz.cast(new ResourceReply(GSON.fromJson(content, JsonObject.class)));
+                    } else {
+                        return GSON.fromJson(content, clazz);
+                    }
+                });
+
+                checkReply(response);
+
+                return response;
+            } catch (Throwable throwable) {
+                throw new CompletionException(throwable);
+            }
+        }, executorService);
     }
 
     private CompletableFuture<ResourceReply> requestResource(String resource) {
