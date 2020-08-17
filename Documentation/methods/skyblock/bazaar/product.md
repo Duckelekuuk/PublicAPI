@@ -2,7 +2,7 @@
  **Note**: This method is deprecated and will be removed at a later date.
 
 ## Description
-Returns information about a bazaar product by product id. 
+Returns information about a bazaar product by product id.
 
 Due to the way the data is stored in the backend, the "buy" and "sell" fields are all the wrong way round so these will need to be flipped. This is not the case on the new [skyblock/bazaar](https://github.com/HypixelDev/PublicAPI/blob/master/Documentation/methods/skyblock/bazaar.md) endpoint.
 
@@ -21,7 +21,7 @@ quick_status is a computed summary of the live state of the product (used for ad
 - movingWeek is the historic *transacted* volume from last 7d + live state
 - orders is the count of active orders
 
-historic_weekly is a list of data points at a 30 minutes interval from the last 7 days, used in the graphs in-game:
+week_historic is a list of data points at a 30 minutes interval from the last 7 days, used in the graphs in-game:
 - sells/buys is the number of instant sell/buys
 - buyVolume is the sum of *transacted* item amounts for this transaction type
 - buyCoins is the sum of *transacted* (volume x unit price) for this transaction type
@@ -34,7 +34,7 @@ You can compute the avg unit price of instant buy on a historic data point using
 - productId
 
 ## Example Response
-```php
+```js
 {
   "success": true,
   "product_info": {

@@ -10,10 +10,7 @@ import net.hypixel.api.adapters.UUIDTypeAdapter;
 import net.hypixel.api.exceptions.APIThrottleException;
 import net.hypixel.api.exceptions.HypixelAPIException;
 import net.hypixel.api.reply.*;
-import net.hypixel.api.reply.skyblock.ResourceReply;
-import net.hypixel.api.reply.skyblock.SkyBlockAuctionsReply;
-import net.hypixel.api.reply.skyblock.SkyBlockNewsReply;
-import net.hypixel.api.reply.skyblock.SkyBlockProfileReply;
+import net.hypixel.api.reply.skyblock.*;
 import net.hypixel.api.util.GameType;
 import net.hypixel.api.util.ResourceType;
 import org.apache.http.client.HttpClient;
@@ -83,24 +80,6 @@ public class HypixelAPI {
     @Deprecated
     public CompletableFuture<PlayerCountReply> getPlayerCount() {
         return get(PlayerCountReply.class, "playerCount");
-    }
-
-    /**
-     * Session endpoint is bound to be removed at some point,
-     * data is mainly internal and highly inaccurate for online checking
-     */
-    @Deprecated
-    public CompletableFuture<SessionReply> getSessionByUuid(UUID player) {
-        return get(SessionReply.class, "session", "uuid", player);
-    }
-
-    /**
-     * Session endpoint is bound to be removed at some point,
-     * data is mainly internal and highly inaccurate for online checking
-     */
-    @Deprecated
-    public CompletableFuture<SessionReply> getSessionByUuid(String player) {
-        return get(SessionReply.class, "session", "uuid", player);
     }
 
     public CompletableFuture<PlayerReply> getPlayerByUuid(UUID player) {
@@ -213,6 +192,18 @@ public class HypixelAPI {
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Gets up to 100 of the player's most recently played games. Games are removed from this list after 3 days.
+     * @param uuid of player
+     * @return CompletableFuture with recentGames reply
+     */
+    public CompletableFuture<RecentGamesReply> getRecentGames(UUID uuid) {
+        return get(RecentGamesReply.class, "recentGames", "uuid", uuid);
+    }
+
+    /**
+>>>>>>> 4e69586148ad06b51e961dd727b3433aa54e82b3
      * Retrieve resources which don't change often.
      *
      * @param resource to be requested
@@ -220,6 +211,15 @@ public class HypixelAPI {
      */
     public CompletableFuture<ResourceReply> getResource(ResourceType resource) {
         return getResource(resource.getPath());
+    }
+
+    /**
+     * Requests information about products in bazaar.
+     *
+     * @return CompletableFuture with BazaarReply
+     */
+    public CompletableFuture<BazaarReply> getBazaar() {
+        return get(BazaarReply.class, "skyblock/bazaar");
     }
 
     public CompletableFuture<ResourceReply> getResource(String resource) {
